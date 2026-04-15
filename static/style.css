@@ -1,0 +1,135 @@
+body { margin:0; font-family:Inter; background:#f9fafb;}
+.app { display:flex;}
+
+.sidebar {
+width:220px; background:#1e293b; color:white; padding:20px;
+}
+.sidebar button {
+width:100%; margin:10px 0; padding:10px;
+border-radius:10px; background:#3b82f6; color:white;
+}
+
+.main { padding:20px; flex:1;}
+
+.grid {
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:20px;
+}
+
+.card {
+background:white;
+padding:20px;
+border-radius:16px;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+input {
+display:block;
+margin:10px 0;
+padding:10px;
+border-radius:8px;
+border:1px solid #ccc;
+}
+
+button {
+padding:10px 15px;
+border:none;
+border-radius:10px;
+background:#22c55e;
+color:white;
+}
+
+.hidden { display:none;}
+/* AUTH PAGES */
+
+.auth-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(to right, #3b82f6, #22c55e);
+}
+
+.auth-container {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.auth-container h2 {
+    margin-bottom: 10px;
+}
+
+.auth-container input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+
+.auth-container button {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.secondary {
+    background: #3b82f6;
+}
+.input-group {
+margin-bottom:15px;
+}
+
+.input-group label {
+font-weight:bold;
+}
+
+.input-group small {
+color:gray;
+font-size:12px;
+}
+
+.result-card {
+background:white;
+padding:15px;
+border-radius:12px;
+margin-top:15px;
+box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+
+.input-group {
+margin-bottom:15px;
+}
+
+.input-group label {
+font-weight:bold;
+}
+
+.input-group small {
+color:gray;
+font-size:12px;
+}
+
+.highlight {
+border-left:5px solid #22c55e;
+}
+
+.history-item {
+padding:10px;
+border-bottom:1px solid #eee;
+}
+#mapContainer {
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  margin-top: 10px;
+}
+
+.grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+  margin-top:15px;
+}

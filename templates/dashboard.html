@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Welcome {{user}}</h1>
+
+<!-- DASHBOARD -->
+<div id="dash" class="page">
+<div class="grid">
+<div class="card">🔋 Range Estimation</div>
+<div class="card">💰 Cost Optimization</div>
+<div class="card">🌱 Environmental Impact</div>
+<div class="card">🧠 Smart Decision System</div>
+</div>
+
+<canvas id="chart"></canvas>
+</div>
+
+<!-- COST CALCULATOR -->
+<div id="calc" class="page hidden">
+<h2>⚡ Charging Cost Calculator</h2>
+
+<div class="input-group">
+<label>Battery Capacity (kWh)</label>
+<input id="cap" placeholder="e.g. 50">
+<small>Total battery size</small>
+</div>
+
+<div class="input-group">
+<label>Current Battery (%)</label>
+<input id="curr" placeholder="e.g. 20">
+</div>
+
+<div class="input-group">
+<label>Target Battery (%)</label>
+<input id="tar" placeholder="e.g. 80">
+</div>
+
+<div class="input-group">
+<label>Electricity Rate (₹/unit)</label>
+<input id="rate" placeholder="e.g. 8">
+</div>
+
+<button onclick="calc()">Calculate</button>
+
+<div class="result-card">
+<h3>⚡ Charging Summary</h3>
+<p id="costOut"></p>
+</div>
+</div>
+
+<!-- RANGE -->
+<div id="range" class="page hidden">
+<h2>🚗 Range Checker</h2>
+
+<div class="input-group">
+<label>Battery (%)</label>
+<input id="b" placeholder="e.g. 50">
+</div>
+
+<div class="input-group">
+<label>Efficiency (km per kWh)</label>
+<input id="eff" placeholder="e.g. 6">
+</div>
+
+<div class="input-group">
+<label>Distance (km)</label>
+<input id="dist" placeholder="e.g. 120">
+</div>
+
+<button onclick="range()">Check</button>
+
+<div class="result-card">
+<h3>🚗 Travel Status</h3>
+<p id="rangeOut"></p>
+</div>
+</div>
+
+<!-- IMPACT -->
+<div id="impact" class="page hidden">
+<h2>🌱 Environmental Impact</h2>
+
+<div class="input-group">
+<label>Distance Travelled (km)</label>
+<input id="km" placeholder="e.g. 100">
+</div>
+
+<button onclick="impact()">Calculate</button>
+
+<div class="result-card">
+<h3>🌍 Impact Report</h3>
+<p id="impactOut"></p>
+</div>
+</div>
+
+<!-- NAV BUTTON (add in sidebar/nav) -->
+<button onclick="nav('map')">📍 Stations Map</button>
+
+<!-- ================= MAP PAGE ================= -->
+<div id="map" class="page hidden">
+
+<h2>📍 EV Charging Stations (Smart Map)</h2>
+<p style="color:gray;">
+💡 Nearest available charging station is automatically selected
+</p>
+<div class="input-group">
+<label>Your Battery (%)</label>
+<input id="mapBattery" placeholder="e.g. 40">
+<small>Used for smart recommendation</small>
+</div>
+
+<div id="mapContainer" style="height:420px;border-radius:12px;"></div>
+
+<div class="grid">
+  <div class="result-card highlight">
+    <h3>🎯 Smart Recommendation</h3>
+    <p id="mapDecision">Open map to analyze…</p>
+  </div>
+  <div class="result-card">
+    <h3>📌 Nearest Station</h3>
+    <p id="nearestInfo">Detecting…</p>
+  </div>
+</div>
+
+</div>
+<!-- DECISION -->
+<div id="decision" class="page hidden">
+
+<h2>🧠 Smart Decision Assistant</h2>
+
+<div class="input-group">
+<label>Battery (%)</label>
+<input id="db" placeholder="e.g. 40">
+</div>
+
+<div class="input-group">
+<label>Distance (km)</label>
+<input id="dd" placeholder="e.g. 60">
+</div>
+
+<button onclick="decision()">Analyze</button>
+
+<div class="grid">
+
+<div class="result-card highlight">
+<h3>🧠 Smart Recommendation</h3>
+<p id="smartDecision">Waiting for input...</p>
+</div>
+
+<div class="result-card">
+<h3>🔋 Battery Health</h3>
+<p id="batteryHealth"></p>
+</div>
+
+</div>
+
+</div>
+<!-- ADD IN SIDEBAR / NAV -->
+<button onclick="nav('compare')">⚖ Compare Vehicles</button>
+<!-- ================== COMPARE PAGE ================== -->
+<div id="compare" class="page hidden">
+
+<h2>⚖ EV vs Petrol/Diesel Comparison</h2>
+
+<div class="input-group">
+<label>Distance (km)</label>
+<input id="cmpDist" placeholder="e.g. 100">
+<small>Total trip distance</small>
+</div>
+
+<div class="input-group">
+<label>Petrol Price (₹/litre)</label>
+<input id="petrolPrice" placeholder="e.g. 100">
+</div>
+
+<div class="input-group">
+<label>Diesel Price (₹/litre)</label>
+<input id="dieselPrice" placeholder="e.g. 90">
+</div>
+
+<button onclick="compare()">Compare</button>
+
+<div class="result-card">
+<h3>📊 Comparison Result</h3>
+<p id="compareOut">Enter values to compare</p>
+</div>
+
+</div>
+
+<!-- HISTORY -->
+<div id="history" class="page hidden">
+<h2>📜 History</h2>
+<button onclick="loadHistory()">Load</button>
+<div id="hist" class="history-box"></div>
+</div>
+
+<!-- FINAL SUMMARY -->
+<div class="card highlight">
+<h2>📊 Final Summary</h2>
+<p id="finalSummary">Run features to see insights</p>
+</div>
+
+<button onclick="tripAdvisor()">Smart Trip Advisor</button>
+{% endblock %}
