@@ -1,27 +1,48 @@
 from flask import Flask, render_template, request, redirect, session, url_for, jsonify
-import sqlite3, hashlib, datetime
+import mysql.connector, hashlib, datetime
 
 app = Flask(__name__)
 app.secret_key = "ev_secret_key_123"
 
-# ---------- DB ----------
+# MYSQL CONFIG 
+DB_CONFIG = {
+    'host': 'localhost',      # Your MySQL host 
+    'user': 'root',           # Your MySQL username
+    'password': '',           # Your MySQL password 
+    'database': 'ev_db'       # Database name 
+}
+
+# DB CONNECTION 
 def db():
-    return sqlite3.connect('database.db')
+    """Connect to MySQL database"""
+    return mysql.connector.connect(**DB_CONFIG)
 
 def init_db():
+    """Create database and tables"""
+    # First create database if it doesn't exist
+    conn = mysql.connector.connect(
+        host=DB_CONFIG['host'],
+        user=DB_CONFIG['user'],
+        password=DB_CONFIG['password']
+    )
+    cur = conn.cursor()
+    cur.execute(f"CREATE DATABASE IF NOT EXISTS {DB_CONFIG['database']}")
+    conn.close()
+    
+    # Now create tables
     con = db()
     cur = con.cursor()
     cur.execute('''CREATE TABLE IF NOT EXISTS users(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT UNIQUE,
-        password TEXT
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        username VARCHAR(100) UNIQUE,
+        password VARCHAR(255)
     )''')
     cur.execute('''CREATE TABLE IF NOT EXISTS history(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT,
-        action TEXT,
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        username VARCHAR(100),
+        action VARCHAR(100),
         value TEXT,
-        created_at TEXT
+        created_at VARCHAR(100)
     )''')
     con.commit()
     con.close()
@@ -31,7 +52,7 @@ init_db()
 def hash_pw(pw):
     return hashlib.sha256(pw.encode()).hexdigest()
 
-# ---------- AUTH ----------
+# AUTH 
 @app.route('/register', methods=['GET','POST'])
 def register():
     if request.method == 'POST':
@@ -40,11 +61,12 @@ def register():
         if len(u) < 3 or len(p) < 5:
             return "Weak credentials"
 
-        con = db(); cur = con.cursor()
+        con = db()
+        cur = con.cursor()
         try:
-            cur.execute("INSERT INTO users(username,password) VALUES(?,?)",(u, hash_pw(p)))
+            cur.execute("INSERT INTO users(username,password) VALUES(%s,%s)", (u, hash_pw(p)))
             con.commit()
-        except:
+        except mysql.connector.errors.IntegrityError:
             con.close()
             return "User exists"
         con.close()
@@ -57,8 +79,9 @@ def login():
         u = request.form['username']
         p = hash_pw(request.form['password'])
 
-        con = db(); cur = con.cursor()
-        cur.execute("SELECT * FROM users WHERE username=? AND password=?", (u,p))
+        con = db()
+        cur = con.cursor()
+        cur.execute("SELECT * FROM users WHERE username=%s AND password=%s", (u,p))
         r = cur.fetchone()
         con.close()
 
@@ -73,14 +96,14 @@ def logout():
     session.clear()
     return redirect('/login')
 
-# ---------- MAIN ----------
+# MAIN
 @app.route('/')
 def home():
     if 'user' not in session:
         return redirect('/login')
     return render_template('dashboard.html', user=session['user'])
 
-# ---------- APIs ----------
+# APIs
 @app.route('/api/cost', methods=['POST'])
 def cost():
     data = request.json
@@ -138,19 +161,24 @@ def compare():
         "diesel": diesel_cost,
         "ev": ev_cost
     })
+
 @app.route('/api/history')
 def history():
-    con = db(); cur = con.cursor()
-    cur.execute("SELECT action,value,created_at FROM history WHERE username=? ORDER BY id DESC LIMIT 10",(session['user'],))
-    rows = cur.fetchall(); con.close()
+    con = db()
+    cur = con.cursor()
+    cur.execute("SELECT action,value,created_at FROM history WHERE username=%s ORDER BY id DESC LIMIT 10", (session['user'],))
+    rows = cur.fetchall()
+    con.close()
     return jsonify(rows)
 
-# ---------- UTIL ----------
+# UTIL 
 def save_history(action, value):
-    con = db(); cur = con.cursor()
-    cur.execute("INSERT INTO history(username,action,value,created_at) VALUES(?,?,?,?)",
+    con = db()
+    cur = con.cursor()
+    cur.execute("INSERT INTO history(username,action,value,created_at) VALUES(%s,%s,%s,%s)",
                 (session['user'], action, value, str(datetime.datetime.now())))
-    con.commit(); con.close()
+    con.commit()
+    con.close()
 
 if __name__ == "__main__":
     app.run(debug=True)
